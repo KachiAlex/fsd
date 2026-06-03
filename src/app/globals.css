@@ -2,25 +2,43 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1c2b3a;
+  --navy: #0d2340;
+  --blue: #1a5276;
+  --mid: #2e86c1;
+  --sky: #aed6f1;
+  --gold: #c9952a;
+  --gold-bg: #faeeda;
+  --green: #1e7a4a;
+  --green-bg: #eaf3de;
+  --purple: #7d3fc0;
+  --purple-bg: #f3eef8;
+  --muted: #5a6b7c;
+  --border: #d5e5f0;
+  --off: #f7fafc;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-navy: var(--navy);
+  --color-blue: var(--blue);
+  --color-mid: var(--mid);
+  --color-sky: var(--sky);
+  --color-gold: var(--gold);
+  --color-gold-bg: var(--gold-bg);
+  --color-green: var(--green);
+  --color-green-bg: var(--green-bg);
+  --color-purple: var(--purple);
+  --color-purple-bg: var(--purple-bg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-off: var(--off);
+  --font-sans: var(--font-dm-sans);
+  --font-serif: var(--font-playfair);
 }
 
 body {
-  background: var(--background);
+  background: #eef2f5;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
