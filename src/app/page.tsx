@@ -113,15 +113,15 @@ export default function HomePage() {
     <div className="flex flex-col">
       {/* HERO */}
       <section
-        className="relative overflow-hidden min-h-[480px] sm:min-h-[540px] flex items-center px-4 sm:px-10 py-16"
+        className="relative overflow-hidden min-h-[480px] sm:min-h-[540px] flex items-center justify-center px-4 sm:px-10 py-16"
       >
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url(/hero-banner.png)" }}
         />
         <div className="absolute inset-0 bg-navy/70" />
-        <div className="relative z-10 max-w-[580px]">
-          <div className="inline-flex items-center gap-1.5 bg-gold px-3 py-1.5 rounded-sm mb-5">
+        <div className="relative z-10 max-w-[580px] text-center">
+          <div className="inline-flex items-center gap-1.5 bg-gold px-3 py-1.5 rounded-sm mb-5 mx-auto">
             <Globe className="w-3 h-3 text-white" />
             <span className="text-[10px] font-bold tracking-[2.5px] uppercase text-white">
               Shaping Africa&apos;s Financial Future
@@ -132,12 +132,12 @@ export default function HomePage() {
             <br />
             <em className="text-sky">for everyone.</em>
           </h1>
-          <p className="text-base text-white/70 leading-[1.75] mb-7 max-w-[480px] font-light">
+          <p className="text-base text-white/70 leading-[1.75] mb-7 max-w-[480px] mx-auto font-light">
             FSD Africa partners with financial systems, policymakers, and
             innovators across the continent to build economies where every person
             and business can participate, grow, and thrive.
           </p>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 justify-center">
             <button className="bg-mid text-white text-[13px] font-semibold px-6 py-2.5 rounded cursor-pointer hover:bg-mid/90 transition-colors">
               Explore our work
             </button>
@@ -146,7 +146,7 @@ export default function HomePage() {
             </button>
           </div>
         </div>
-        <div className="absolute right-4 sm:right-9 bottom-5 w-[180px] sm:w-[200px] h-[100px] sm:h-[120px] border border-white/10 rounded-lg flex flex-col items-center justify-center gap-2">
+        <div className="absolute left-4 sm:left-9 bottom-5 w-[180px] sm:w-[200px] h-[100px] sm:h-[120px] border border-white/10 rounded-lg flex flex-col items-center justify-center gap-2">
           <Map className="w-[50px] sm:w-[60px] h-[50px] sm:h-[60px] text-white opacity-30" />
           <span className="text-[9px] text-white/30 tracking-[2px] uppercase">
             38 countries
