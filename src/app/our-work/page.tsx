@@ -10,10 +10,11 @@ export default function OurWorkPage() {
   return (
     <div className="flex flex-col">
       {/* HERO */}
-      <section className="relative overflow-hidden bg-navy px-4 sm:px-10 py-16 sm:py-20">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_#2e86c1_0%,_transparent_60%)]" />
-        <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex items-center gap-1.5 bg-gold px-3 py-1.5 rounded-sm mb-5">
+      <section className="relative overflow-hidden min-h-[380px] sm:min-h-[420px] flex items-center justify-center px-4 sm:px-10 py-16 sm:py-20">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(/hero-banner.png)" }} />
+        <div className="absolute inset-0 bg-navy/70" />
+        <div className="relative z-10 max-w-3xl text-center">
+          <div className="inline-flex items-center gap-1.5 bg-gold px-3 py-1.5 rounded-sm mb-5 mx-auto">
             <Globe className="w-3 h-3 text-white" />
             <span className="text-[10px] font-bold tracking-[2.5px] uppercase text-white">
               Our Work
@@ -24,7 +25,7 @@ export default function OurWorkPage() {
             <br />
             <em className="text-sky">real change.</em>
           </h1>
-          <p className="text-base text-white/70 leading-[1.75] max-w-2xl font-light">
+          <p className="text-base text-white/70 leading-[1.75] max-w-2xl mx-auto font-light">
             We design and implement programmes that tackle the root causes of financial
             exclusion — from policy reform to product innovation.
           </p>
