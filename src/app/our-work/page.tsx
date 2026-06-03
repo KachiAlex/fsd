@@ -1,14 +1,37 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Globe, Users, Shield, BarChart3, Clock, ArrowRight, ChevronRight } from "lucide-react";
+import { Globe, Users, Shield, BarChart3, Clock, ArrowRight } from "lucide-react";
+import WebPageJsonLd from "../components/WebPageJsonLd";
 
-export const metadata = {
-  title: "Our Work | FSD Africa",
-  description: "Explore FSD Africa's programmes in financial inclusion, climate finance, capital markets, and policy.",
+export const metadata: Metadata = {
+  title: "Our Work",
+  description:
+    "Explore FSD Africa's programmes in financial inclusion, climate finance, capital markets, and policy.",
+  alternates: {
+    canonical: "/our-work",
+  },
+  openGraph: {
+    title: "Our Work | FSD Africa",
+    description:
+      "Explore FSD Africa's programmes in financial inclusion, climate finance, capital markets, and policy.",
+    url: "/our-work",
+  },
+  twitter: {
+    title: "Our Work | FSD Africa",
+    description:
+      "Explore FSD Africa's programmes in financial inclusion, climate finance, capital markets, and policy.",
+  },
 };
 
 export default function OurWorkPage() {
   return (
-    <div className="flex flex-col">
+    <>
+      <WebPageJsonLd
+        title="Our Work | FSD Africa"
+        description="Explore FSD Africa's programmes in financial inclusion, climate finance, capital markets, and policy."
+        path="/our-work"
+      />
+      <div className="flex flex-col">
       {/* HERO */}
       <section className="relative overflow-hidden min-h-[380px] sm:min-h-[420px] flex items-center justify-center px-4 sm:px-10 py-16 sm:py-20">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(/hero-banner.png)" }} />
@@ -155,5 +178,6 @@ export default function OurWorkPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

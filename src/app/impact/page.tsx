@@ -1,14 +1,37 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Globe, Users, Shield, User, Home as HomeIcon, ArrowRight } from "lucide-react";
+import { Globe, Users, Shield, User, Home as HomeIcon } from "lucide-react";
+import WebPageJsonLd from "../components/WebPageJsonLd";
 
-export const metadata = {
-  title: "Impact | FSD Africa",
-  description: "Discover the real-world impact of FSD Africa's work across the continent.",
+export const metadata: Metadata = {
+  title: "Impact",
+  description:
+    "Discover the real-world impact of FSD Africa's work across the continent.",
+  alternates: {
+    canonical: "/impact",
+  },
+  openGraph: {
+    title: "Impact | FSD Africa",
+    description:
+      "Discover the real-world impact of FSD Africa's work across the continent.",
+    url: "/impact",
+  },
+  twitter: {
+    title: "Impact | FSD Africa",
+    description:
+      "Discover the real-world impact of FSD Africa's work across the continent.",
+  },
 };
 
 export default function ImpactPage() {
   return (
-    <div className="flex flex-col">
+    <>
+      <WebPageJsonLd
+        title="Impact | FSD Africa"
+        description="Discover the real-world impact of FSD Africa's work across the continent."
+        path="/impact"
+      />
+      <div className="flex flex-col">
       {/* HERO */}
       <section className="relative overflow-hidden min-h-[380px] sm:min-h-[420px] flex items-center justify-center px-4 sm:px-10 py-16 sm:py-20">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(/hero-banner.png)" }} />
@@ -147,5 +170,6 @@ export default function ImpactPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

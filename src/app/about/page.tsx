@@ -1,14 +1,33 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Globe, Users, Shield, BarChart3, Clock, ArrowRight, Search, Menu, X } from "lucide-react";
+import { Globe, Users, Shield, BarChart3, Clock, ArrowRight } from "lucide-react";
+import AboutJsonLd from "../components/AboutJsonLd";
 
-export const metadata = {
-  title: "About Us | FSD Africa",
-  description: "Learn about FSD Africa's mission to build inclusive financial systems across the continent.",
+export const metadata: Metadata = {
+  title: "About Us",
+  description:
+    "Learn about FSD Africa's mission to build inclusive financial systems across the continent.",
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "About Us | FSD Africa",
+    description:
+      "Learn about FSD Africa's mission to build inclusive financial systems across the continent.",
+    url: "/about",
+  },
+  twitter: {
+    title: "About Us | FSD Africa",
+    description:
+      "Learn about FSD Africa's mission to build inclusive financial systems across the continent.",
+  },
 };
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col">
+    <>
+      <AboutJsonLd />
+      <div className="flex flex-col">
       {/* HERO */}
       <section className="relative overflow-hidden min-h-[380px] sm:min-h-[420px] flex items-center justify-center px-4 sm:px-10 py-16 sm:py-20">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(/hero-banner.png)" }} />
@@ -179,5 +198,6 @@ export default function AboutPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }
