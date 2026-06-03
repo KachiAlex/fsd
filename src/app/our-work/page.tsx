@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Globe, Users, Shield, BarChart3, Clock, ArrowRight } from "lucide-react";
+import { Globe, Users, Shield, BarChart3, Clock, ArrowRight, MapPin } from "lucide-react";
 import WebPageJsonLd from "../components/WebPageJsonLd";
+import HeroBanner from "../components/HeroBanner";
+import { getProjects } from "@/lib/wordpress";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Our Work",
@@ -23,7 +27,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function OurWorkPage() {
+export default async function OurWorkPage() {
+  const { data: projects } = await getProjects({ per_page: 6, status: "active" });
   return (
     <>
       <WebPageJsonLd
@@ -32,28 +37,23 @@ export default function OurWorkPage() {
         path="/our-work"
       />
       <div className="flex flex-col">
-      {/* HERO */}
-      <section className="relative overflow-hidden min-h-[380px] sm:min-h-[420px] flex items-center justify-center px-4 sm:px-10 py-16 sm:py-20">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(/hero-banner.png)" }} />
-        <div className="absolute inset-0 bg-navy/70" />
-        <div className="relative z-10 max-w-3xl text-center">
-          <div className="inline-flex items-center gap-1.5 bg-gold px-3 py-1.5 rounded-sm mb-5 mx-auto">
-            <Globe className="w-3 h-3 text-white" />
-            <span className="text-[10px] font-bold tracking-[2.5px] uppercase text-white">
-              Our Work
-            </span>
-          </div>
-          <h1 className="font-serif text-[clamp(2.25rem,5vw,3.25rem)] leading-[1.15] text-white mb-4">
-            Programmes that drive
-            <br />
-            <em className="text-sky">real change.</em>
-          </h1>
-          <p className="text-base text-white/70 leading-[1.75] max-w-2xl mx-auto font-light">
-            We design and implement programmes that tackle the root causes of financial
-            exclusion — from policy reform to product innovation.
-          </p>
+      <HeroBanner>
+        <div className="inline-flex items-center gap-1.5 bg-gold px-3 py-1.5 rounded-sm mb-5 mx-auto">
+          <Globe className="w-3 h-3 text-white" />
+          <span className="text-[10px] font-bold tracking-[2.5px] uppercase text-white">
+            Our Work
+          </span>
         </div>
-      </section>
+        <h1 className="font-serif text-[clamp(2.25rem,5vw,3.25rem)] leading-[1.15] text-white mb-4">
+          Programmes that drive
+          <br />
+          <em className="text-sky">real change.</em>
+        </h1>
+        <p className="text-base text-white/70 leading-[1.75] max-w-2xl mx-auto font-light">
+          We design and implement programmes that tackle the root causes of financial
+          exclusion — from policy reform to product innovation.
+        </p>
+      </HeroBanner>
 
       {/* PILLARS */}
       <section className="px-4 sm:px-10 py-12 sm:py-16 bg-white">
@@ -145,8 +145,54 @@ export default function OurWorkPage() {
         </div>
       </section>
 
-      {/* HOW WE WORK */}
+      {/* ACTIVE PROJECTS */}
       <section className="px-4 sm:px-10 py-12 sm:py-16 bg-off">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-[10px] font-bold tracking-[2.5px] uppercase text-gold mb-2 text-center">
+            Active Programmes
+          </div>
+          <h2 className="font-serif text-[clamp(1.5rem,3vw,2rem)] font-semibold text-navy leading-tight mb-8 text-center">
+            Current projects driving impact
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {projects.map((project) => (
+              <Link
+                key={project.id}
+                href={`/projects/${project.slug}`}
+                className="bg-white border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow group"
+              >
+                <div className="h-1 bg-mid" />
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-[9px] font-bold tracking-[1.5px] uppercase px-2 py-0.5 rounded-sm bg-green text-white">
+                      Active
+                    </span>
+                    {project.countries && project.countries.length > 0 && (
+                      <span className="text-[11px] text-muted flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
+                        {project.countries.map((c) => c.name).join(", ")}
+                      </span>
+                    )}
+                  </div>
+                  <h3
+                    className="font-serif text-base font-semibold text-navy mb-2 group-hover:text-mid transition-colors"
+                    dangerouslySetInnerHTML={{ __html: project.title.rendered }}
+                  />
+                  <p className="text-xs text-muted leading-relaxed">
+                    {project.excerpt.rendered.replace(/<[^>]+>/g, "").slice(0, 140)}...
+                  </p>
+                  <span className="mt-3 text-xs font-semibold text-mid flex items-center gap-1 group-hover:gap-2 transition-all">
+                    Learn more <ArrowRight className="w-3 h-3" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HOW WE WORK */}
+      <section className="px-4 sm:px-10 py-12 sm:py-16 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="text-[10px] font-bold tracking-[2.5px] uppercase text-gold mb-2 text-center">
             Approach
@@ -169,7 +215,7 @@ export default function OurWorkPage() {
                 text: "We connect African markets with domestic and international investors to scale proven solutions.",
               },
             ].map((item, i) => (
-              <div key={i} className="bg-white border border-border rounded-lg p-6">
+              <div key={i} className="bg-off border border-border rounded-lg p-6">
                 <div className="font-serif text-base font-semibold text-navy mb-2">{item.title}</div>
                 <p className="text-xs text-muted leading-relaxed">{item.text}</p>
               </div>

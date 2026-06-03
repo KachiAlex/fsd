@@ -3,6 +3,7 @@ import { Playfair_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Navigation from "./components/Navigation";
 import Analytics from "./components/Analytics";
+import PageViewTracker from "./components/PageViewTracker";
 import JsonLd from "./components/JsonLd";
 
 const playfair = Playfair_Display({
@@ -73,6 +74,17 @@ export default function RootLayout({
       className={`${playfair.variable} ${dmSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
+        {process.env.NEXT_PUBLIC_GTM_ID && (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${process.env.NEXT_PUBLIC_GTM_ID}`}
+              height="0"
+              width="0"
+              className="hidden invisible"
+              title="gtm"
+            />
+          </noscript>
+        )}
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-gold focus:text-white focus:text-xs focus:font-semibold focus:px-4 focus:py-2 focus:rounded"
@@ -80,6 +92,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Analytics />
+        <PageViewTracker />
         <JsonLd />
         <header>
           <Navigation />

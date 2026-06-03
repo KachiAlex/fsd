@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Globe, Mail, MapPin, Phone } from "lucide-react";
 import ContactJsonLd from "../components/ContactJsonLd";
+import HeroBanner from "../components/HeroBanner";
+import ContactForm from "../components/ContactForm";
+import Newsletter from "../components/Newsletter";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -27,24 +30,19 @@ export default function ContactPage() {
     <>
       <ContactJsonLd />
       <div className="flex flex-col">
-      {/* HERO */}
-      <section className="relative overflow-hidden min-h-[380px] sm:min-h-[420px] flex items-center justify-center px-4 sm:px-10 py-16 sm:py-20">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(/hero-banner.png)" }} />
-        <div className="absolute inset-0 bg-navy/70" />
-        <div className="relative z-10 max-w-3xl text-center">
-          <div className="inline-flex items-center gap-1.5 bg-gold px-3 py-1.5 rounded-sm mb-5 mx-auto">
-            <Globe className="w-3 h-3 text-white" />
-            <span className="text-[10px] font-bold tracking-[2.5px] uppercase text-white">
-              Contact
-            </span>
-          </div>
-          <h1 className="font-serif text-[clamp(2.25rem,5vw,3.25rem)] leading-[1.15] text-white mb-4">
-            Let&apos;s build
-            <br />
-            <em className="text-sky">something together.</em>
-          </h1>
+      <HeroBanner>
+        <div className="inline-flex items-center gap-1.5 bg-gold px-3 py-1.5 rounded-sm mb-5 mx-auto">
+          <Globe className="w-3 h-3 text-white" />
+          <span className="text-[10px] font-bold tracking-[2.5px] uppercase text-white">
+            Contact
+          </span>
         </div>
-      </section>
+        <h1 className="font-serif text-[clamp(2.25rem,5vw,3.25rem)] leading-[1.15] text-white mb-4">
+          Let&apos;s build
+          <br />
+          <em className="text-sky">something together.</em>
+        </h1>
+      </HeroBanner>
 
       {/* CONTACT CONTENT */}
       <section className="px-4 sm:px-10 py-12 sm:py-16 bg-white">
@@ -52,65 +50,7 @@ export default function ContactPage() {
           {/* FORM */}
           <div>
             <h2 className="font-serif text-xl font-semibold text-navy mb-6">Send us a message</h2>
-            <form className="flex flex-col gap-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-medium text-navy mb-1 block">First name</label>
-                  <input
-                    type="text"
-                    className="w-full border border-border rounded-lg px-3.5 py-2.5 text-xs outline-none focus:border-mid"
-                    placeholder="Jane"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-navy mb-1 block">Last name</label>
-                  <input
-                    type="text"
-                    className="w-full border border-border rounded-lg px-3.5 py-2.5 text-xs outline-none focus:border-mid"
-                    placeholder="Doe"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-navy mb-1 block">Email</label>
-                <input
-                  type="email"
-                  className="w-full border border-border rounded-lg px-3.5 py-2.5 text-xs outline-none focus:border-mid"
-                  placeholder="jane@organisation.org"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-navy mb-1 block">Organisation</label>
-                <input
-                  type="text"
-                  className="w-full border border-border rounded-lg px-3.5 py-2.5 text-xs outline-none focus:border-mid"
-                  placeholder="Your organisation"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-navy mb-1 block">Enquiry type</label>
-                <select className="w-full border border-border rounded-lg px-3.5 py-2.5 text-xs outline-none focus:border-mid bg-white text-muted">
-                  <option>Partnership opportunity</option>
-                  <option>Media enquiry</option>
-                  <option>Research collaboration</option>
-                  <option>General enquiry</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-navy mb-1 block">Message</label>
-                <textarea
-                  rows={4}
-                  className="w-full border border-border rounded-lg px-3.5 py-2.5 text-xs outline-none focus:border-mid resize-none"
-                  placeholder="How can we help?"
-                />
-              </div>
-              <button
-                type="submit"
-                className="bg-mid text-white text-xs font-semibold px-6 py-3 rounded-lg hover:bg-mid/90 transition-colors w-full sm:w-auto cursor-pointer"
-              >
-                Send message
-              </button>
-            </form>
+            <ContactForm />
           </div>
 
           {/* CONTACT DETAILS */}
@@ -185,6 +125,13 @@ export default function ContactPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* NEWSLETTER */}
+      <section className="px-4 sm:px-10 py-12 sm:py-16 bg-off">
+        <div className="max-w-4xl mx-auto">
+          <Newsletter />
         </div>
       </section>
     </div>

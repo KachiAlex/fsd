@@ -1,7 +1,13 @@
+import Image from "next/image";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Globe, Users, Shield, BarChart3, Clock, ArrowRight } from "lucide-react";
 import AboutJsonLd from "../components/AboutJsonLd";
+import HeroBanner from "../components/HeroBanner";
+import { getPeople } from "@/lib/wordpress";
+import { getImpactStats } from "@/lib/queries";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -23,34 +29,33 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const [people, stats] = await Promise.all([
+    getPeople({ per_page: 10 }),
+    getImpactStats(),
+  ]);
   return (
     <>
       <AboutJsonLd />
       <div className="flex flex-col">
-      {/* HERO */}
-      <section className="relative overflow-hidden min-h-[380px] sm:min-h-[420px] flex items-center justify-center px-4 sm:px-10 py-16 sm:py-20">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(/hero-banner.png)" }} />
-        <div className="absolute inset-0 bg-navy/70" />
-        <div className="relative z-10 max-w-3xl text-center">
-          <div className="inline-flex items-center gap-1.5 bg-gold px-3 py-1.5 rounded-sm mb-5 mx-auto">
-            <Globe className="w-3 h-3 text-white" />
-            <span className="text-[10px] font-bold tracking-[2.5px] uppercase text-white">
-              About FSD Africa
-            </span>
-          </div>
-          <h1 className="font-serif text-[clamp(2.25rem,5vw,3.25rem)] leading-[1.15] text-white mb-4">
-            Building financial systems
-            <br />
-            <em className="text-sky">that work for everyone.</em>
-          </h1>
-          <p className="text-base text-white/70 leading-[1.75] max-w-2xl mx-auto font-light">
-            FSD Africa is a specialist development agency working to reduce poverty
-            across sub-Saharan Africa by building financial markets that are efficient,
-            robust, and inclusive.
-          </p>
+      <HeroBanner>
+        <div className="inline-flex items-center gap-1.5 bg-gold px-3 py-1.5 rounded-sm mb-5 mx-auto">
+          <Globe className="w-3 h-3 text-white" />
+          <span className="text-[10px] font-bold tracking-[2.5px] uppercase text-white">
+            About FSD Africa
+          </span>
         </div>
-      </section>
+        <h1 className="font-serif text-[clamp(2.25rem,5vw,3.25rem)] leading-[1.15] text-white mb-4">
+          Building financial systems
+          <br />
+          <em className="text-sky">that work for everyone.</em>
+        </h1>
+        <p className="text-base text-white/70 leading-[1.75] max-w-2xl mx-auto font-light">
+          FSD Africa is a specialist development agency working to reduce poverty
+          across sub-Saharan Africa by building financial markets that are efficient,
+          robust, and inclusive.
+        </p>
+      </HeroBanner>
 
       {/* MISSION */}
       <section className="px-4 sm:px-10 py-12 sm:py-16 bg-white">
@@ -77,10 +82,10 @@ export default function AboutPage() {
           <div className="bg-off rounded-lg p-8 border border-border">
             <div className="grid grid-cols-2 gap-6">
               {[
-                { n: "38", l: "Countries" },
-                { n: "150+", l: "Partners" },
-                { n: "$200M+", l: "Capital mobilised" },
-                { n: "12M+", l: "People reached" },
+                { n: String(stats.countriesReached), l: "Countries" },
+                { n: String(stats.activeProjects), l: "Active Projects" },
+                { n: String(stats.publicationsProduced), l: "Publications" },
+                { n: String(stats.storiesPublished), l: "Stories" },
               ].map((s, i) => (
                 <div key={i} className="text-center">
                   <div className="font-serif text-2xl font-bold text-navy">{s.n}</div>
@@ -168,30 +173,23 @@ export default function AboutPage() {
             Meet the team guiding our mission
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {[
-              {
-                name: "Mark Napier",
-                role: "Chief Executive Officer",
-                bio: "Leading FSD Africa's strategy to transform financial systems across the continent.",
-              },
-              {
-                name: "Sarah Odei",
-                role: "Director of Programmes",
-                bio: "Overseeing programme delivery and partnerships in 38 countries.",
-              },
-              {
-                name: "James Mwangi",
-                role: "Head of Policy & Research",
-                bio: "Driving evidence-based policy reform and regulatory innovation.",
-              },
-            ].map((person, i) => (
-              <div key={i} className="bg-off rounded-lg p-6 border border-border text-center">
-                <div className="w-16 h-16 rounded-full bg-navy/10 mx-auto mb-3 flex items-center justify-center">
-                  <Users className="w-7 h-7 text-navy/40" />
+            {people.slice(0, 6).map((person) => (
+              <div key={person.id} className="bg-off rounded-lg p-6 border border-border text-center">
+                <div className="w-16 h-16 rounded-full bg-navy/10 mx-auto mb-3 flex items-center justify-center overflow-hidden">
+                  {person.featured_image?.source_url ? (
+                    <Image src={person.featured_image.source_url} alt={person.title.rendered} width={64} height={64} className="w-full h-full object-cover" />
+                  ) : (
+                    <Users className="w-7 h-7 text-navy/40" />
+                  )}
                 </div>
-                <h3 className="font-serif text-base font-semibold text-navy">{person.name}</h3>
-                <div className="text-xs text-mid font-medium mb-2">{person.role}</div>
-                <p className="text-xs text-muted leading-relaxed">{person.bio}</p>
+                <h3
+                  className="font-serif text-base font-semibold text-navy"
+                  dangerouslySetInnerHTML={{ __html: person.title.rendered }}
+                />
+                <div className="text-xs text-mid font-medium mb-2">{person.acf?.role || "Team Member"}</div>
+                <p className="text-xs text-muted leading-relaxed">
+                  {person.acf?.biography || person.content.rendered.replace(/<[^>]+>/g, "").slice(0, 120)}
+                </p>
               </div>
             ))}
           </div>

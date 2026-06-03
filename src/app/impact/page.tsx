@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Globe, Users, Shield, User, Home as HomeIcon } from "lucide-react";
 import WebPageJsonLd from "../components/WebPageJsonLd";
+import HeroBanner from "../components/HeroBanner";
+import { getStories, getCountries } from "@/lib/wordpress";
+import { getImpactStats } from "@/lib/queries";
+import type { Story } from "@/lib/types";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Impact",
@@ -23,7 +29,76 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ImpactPage() {
+const iconMap: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties; strokeWidth?: number }>> = {
+  User,
+  Shield,
+  Users,
+};
+
+function StoryCard({ story, index }: { story: Story; index: number }) {
+  const statNumber = story.acf?.stat_number || "";
+  const statLabel = story.acf?.stat_label || "";
+  const location = story.acf?.location || "";
+  const theme = story.themes?.[0]?.name || "";
+  const tag = [location, theme].filter(Boolean).join(" · ");
+
+  const palettes = [
+    { bg: "#E6F1FB", color: "#185FA5", tagBg: "#E6F1FB", tagColor: "#0C447C" },
+    { bg: "var(--gold-bg)", color: "#854F0B", tagBg: "var(--gold-bg)", tagColor: "#633806" },
+    { bg: "var(--green-bg)", color: "#27500A", tagBg: "var(--green-bg)", tagColor: "#173404" },
+  ];
+  const p = palettes[index % palettes.length];
+  const Icon = index === 0 ? User : index === 1 ? Shield : HomeIcon;
+
+  return (
+    <Link
+      href={`/stories/${story.slug}`}
+      className="bg-off border border-border rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow block"
+    >
+      <div className="h-20 flex items-center justify-center" style={{ backgroundColor: p.bg }}>
+        <Icon className="w-9 h-9 opacity-70" style={{ color: p.color }} strokeWidth={1.5} />
+      </div>
+      <div className="p-4">
+        <span
+          className="inline-block text-[9px] font-bold tracking-[1.5px] uppercase px-2 py-0.5 rounded-sm mb-2"
+          style={{ backgroundColor: p.tagBg, color: p.tagColor }}
+        >
+          {tag}
+        </span>
+        <h3
+          className="font-serif text-sm font-semibold text-navy leading-snug mb-1.5"
+          dangerouslySetInnerHTML={{ __html: story.title.rendered }}
+        />
+        <p className="text-[11px] text-muted leading-relaxed line-clamp-3">
+          {story.excerpt.rendered.replace(/<[^>]+>/g, "").slice(0, 140)}...
+        </p>
+      </div>
+      {(statNumber || statLabel) && (
+        <div className="px-4 py-3 border-t border-border flex gap-5">
+          <div>
+            <div className="font-serif text-lg font-bold text-blue">{statNumber}</div>
+            <div className="text-[9px] text-muted mt-0.5">{statLabel}</div>
+          </div>
+        </div>
+      )}
+    </Link>
+  );
+}
+
+export default async function ImpactPage() {
+  const [stories, countries, stats] = await Promise.all([
+    getStories({ per_page: 3, orderby: "date", order: "desc" }),
+    getCountries({ per_page: 100 }),
+    getImpactStats(),
+  ]);
+
+  const impactNumbers = [
+    { bg: "bg-navy", n: "12M+", l: "People with improved access to financial services" },
+    { bg: "bg-blue", n: "$200M", l: "Capital mobilised for underserved markets" },
+    { bg: "bg-gold", n: "47", l: "Policy and regulatory reforms influenced" },
+    { bg: "bg-green", n: "62%", l: "Of beneficiaries identify as women" },
+  ];
+
   return (
     <>
       <WebPageJsonLd
@@ -32,11 +107,7 @@ export default function ImpactPage() {
         path="/impact"
       />
       <div className="flex flex-col">
-      {/* HERO */}
-      <section className="relative overflow-hidden min-h-[380px] sm:min-h-[420px] flex items-center justify-center px-4 sm:px-10 py-16 sm:py-20">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(/hero-banner.png)" }} />
-        <div className="absolute inset-0 bg-navy/70" />
-        <div className="relative z-10 max-w-3xl text-center">
+        <HeroBanner>
           <div className="inline-flex items-center gap-1.5 bg-gold px-3 py-1.5 rounded-sm mb-5 mx-auto">
             <Globe className="w-3 h-3 text-white" />
             <span className="text-[10px] font-bold tracking-[2.5px] uppercase text-white">
@@ -52,124 +123,53 @@ export default function ImpactPage() {
             Our work touches millions of people across Africa. These numbers
             represent lives transformed, markets strengthened, and systems rebuilt.
           </p>
-        </div>
-      </section>
+        </HeroBanner>
 
-      {/* IMPACT NUMBERS */}
-      <section className="px-4 sm:px-10 py-12 sm:py-16 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-            {[
-              { bg: "bg-navy", n: "12M+", l: "People with improved access to financial services" },
-              { bg: "bg-blue", n: "$200M", l: "Capital mobilised for underserved markets" },
-              { bg: "bg-gold", n: "47", l: "Policy and regulatory reforms influenced" },
-              { bg: "bg-green", n: "62%", l: "Of beneficiaries identify as women" },
-            ].map((num, i) => (
-              <div key={i} className={`${num.bg} rounded-lg p-6 text-center`}>
-                <div className="font-serif text-[32px] font-bold text-white leading-none">{num.n}</div>
-                <div className="text-[11px] text-white/75 mt-1.5 leading-snug">{num.l}</div>
-              </div>
-            ))}
-          </div>
+        {/* IMPACT NUMBERS */}
+        <section className="px-4 sm:px-10 py-12 sm:py-16 bg-white">
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+              {impactNumbers.map((num, i) => (
+                <div key={i} className={`${num.bg} rounded-lg p-6 text-center`}>
+                  <div className="font-serif text-[32px] font-bold text-white leading-none">{num.n}</div>
+                  <div className="text-[11px] text-white/75 mt-1.5 leading-snug">{num.l}</div>
+                </div>
+              ))}
+            </div>
 
-          <div className="text-[10px] font-bold tracking-[2.5px] uppercase text-gold mb-2 text-center">
-            Stories of Change
+            <div className="text-[10px] font-bold tracking-[2.5px] uppercase text-gold mb-2 text-center">
+              Stories of Change
+            </div>
+            <h2 className="font-serif text-[clamp(1.5rem,3vw,2rem)] font-semibold text-navy leading-tight mb-8 text-center">
+              From data to lived experience
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {stories.data.map((story, i) => (
+                <StoryCard key={story.id} story={story} index={i} />
+              ))}
+            </div>
           </div>
-          <h2 className="font-serif text-[clamp(1.5rem,3vw,2rem)] font-semibold text-navy leading-tight mb-8 text-center">
-            From data to lived experience
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              {
-                thumbBg: "#E6F1FB",
-                thumbColor: "#185FA5",
-                icon: User,
-                tagBg: "#E6F1FB",
-                tagColor: "#0C447C",
-                tag: "Kenya · Inclusion",
-                title: `"My savings account changed everything"`,
-                text: "For Wanjiru, a smallholder farmer in Nakuru, mobile savings was the difference between absorbing a bad harvest and losing her farm.",
-                statN: "3.2M",
-                statL: "Farmers reached",
-              },
-              {
-                thumbBg: "var(--gold-bg)",
-                thumbColor: "#854F0B",
-                icon: Shield,
-                tagBg: "var(--gold-bg)",
-                tagColor: "#633806",
-                tag: "Rwanda · Climate",
-                title: "Green bonds, green futures: Rwanda's climate model",
-                text: "Rwanda's inaugural sovereign green bond raised $30M for climate-resilient infrastructure — a framework FSD Africa helped develop.",
-                statN: "$30M",
-                statL: "Capital raised",
-              },
-              {
-                thumbBg: "var(--green-bg)",
-                thumbColor: "#27500A",
-                icon: HomeIcon,
-                tagBg: "var(--green-bg)",
-                tagColor: "#173404",
-                tag: "Ghana · Women",
-                title: "Closing the gap — Fatima grows her business",
-                text: "With access to an AFAWA-supported loan product, Fatima hired 8 staff and expanded her textile business across two districts in Accra.",
-                statN: "42K",
-                statL: "Women entrepreneurs supported",
-              },
-            ].map((story, i) => (
-              <div
-                key={i}
-                className="bg-off border border-border rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
-              >
-                <div className="h-20 flex items-center justify-center" style={{ backgroundColor: story.thumbBg }}>
-                  <story.icon className="w-9 h-9 opacity-70" style={{ color: story.thumbColor }} strokeWidth={1.5} />
-                </div>
-                <div className="p-4">
-                  <span
-                    className="inline-block text-[9px] font-bold tracking-[1.5px] uppercase px-2 py-0.5 rounded-sm mb-2"
-                    style={{ backgroundColor: story.tagBg, color: story.tagColor }}
-                  >
-                    {story.tag}
-                  </span>
-                  <h3 className="font-serif text-sm font-semibold text-navy leading-snug mb-1.5">{story.title}</h3>
-                  <p className="text-[11px] text-muted leading-relaxed">{story.text}</p>
-                </div>
-                <div className="px-4 py-3 border-t border-border flex gap-5">
-                  <div>
-                    <div className="font-serif text-lg font-bold text-blue">{story.statN}</div>
-                    <div className="text-[9px] text-muted mt-0.5">{story.statL}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* COUNTRY SPOTLIGHT */}
-      <section className="px-4 sm:px-10 py-12 sm:py-16 bg-off">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-[10px] font-bold tracking-[2.5px] uppercase text-gold mb-2 text-center">
-            Where We Work
+        {/* COUNTRY SPOTLIGHT */}
+        <section className="px-4 sm:px-10 py-12 sm:py-16 bg-off">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-[10px] font-bold tracking-[2.5px] uppercase text-gold mb-2 text-center">
+              Where We Work
+            </div>
+            <h2 className="font-serif text-[clamp(1.5rem,3vw,2rem)] font-semibold text-navy leading-tight mb-8 text-center">
+              Active in {stats.countriesReached} countries
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {countries.map((country) => (
+                <div key={country.id} className="bg-white border border-border rounded-lg px-4 py-3 text-center text-sm font-medium text-navy">
+                  {country.title?.rendered || country.slug}
+                </div>
+              ))}
+            </div>
           </div>
-          <h2 className="font-serif text-[clamp(1.5rem,3vw,2rem)] font-semibold text-navy leading-tight mb-8 text-center">
-            Active in 38 countries
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              "Kenya", "Nigeria", "Ghana", "Rwanda",
-              "Ethiopia", "Tanzania", "Uganda", "Zambia",
-              "Malawi", "Mozambique", "Senegal", "South Africa",
-            ].map((country, i) => (
-              <div key={i} className="bg-white border border-border rounded-lg px-4 py-3 text-center text-sm font-medium text-navy">
-                {country}
-              </div>
-            ))}
-          </div>
-          <p className="text-center text-xs text-muted mt-4">And 26 more across sub-Saharan Africa.</p>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
     </>
   );
 }

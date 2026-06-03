@@ -1,10 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
-  distDir: "out",
   images: {
-    unoptimized: true,
+    formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "fsdafrica.org",
+        pathname: "/wp-content/uploads/**",
+      },
+    ],
   },
   async headers() {
     return [
